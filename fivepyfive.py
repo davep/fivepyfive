@@ -60,6 +60,7 @@ class FiveByFive(App[None]):
     BINDINGS = [("r", "reset()", "Reset"), ("q", "quit()", "Quit")]
 
     def __init__(self) -> None:
+        """Constructor."""
         super().__init__(title="5x5 -- A little annoying puzzle")
 
     @property
