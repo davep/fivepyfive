@@ -68,7 +68,7 @@ class FiveByFive(App[None]):
 
         :type: DOMQuery[Button]
         """
-        return self.query( "Button.on" )
+        return self.query("Button.on")
 
     @property
     def on_count(self) -> int:
