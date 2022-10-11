@@ -1,0 +1,53 @@
+Screen {
+    layout: vertical;
+    background: #444444
+}
+
+Horizontal {
+    height: 20%
+}
+
+GameHeader {
+    background: red;
+    color: white;
+    height: 1;
+    dock: top;
+}
+
+GameHeader #app-title {
+    width: 60%;
+}
+
+GameHeader #moves {
+    width: 20%;
+}
+
+GameHeader #progress {
+    width: 20%;
+}
+
+Footer {
+    height: 1;
+    dock: bottom;
+}
+
+Button {
+    width: 20%;
+    height: 100%;
+    background: #440000;
+    border: none
+}
+
+Button:hover {
+    background: #550000
+}
+
+Button.on {
+    background: #bb0000
+}
+
+Button.on:hover {
+    background: #dd0000
+}
+
+/* five_by_five.css ends here */
