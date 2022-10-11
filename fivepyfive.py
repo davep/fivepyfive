@@ -84,7 +84,7 @@ class FiveByFive(App[None]):
         self.moves = 0
         self.on_cells.remove_class("on")
         self.toggle_cells(
-            self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2}", Button)
+            self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2 }", Button)
         )
 
     def compose(self) -> ComposeResult:
