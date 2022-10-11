@@ -1,10 +1,10 @@
 Screen {
     layout: vertical;
-    background: #444444
+    background: #444444;
 }
 
 Horizontal {
-    height: 20%
+    height: 20%;
 }
 
 GameHeader {
@@ -35,19 +35,19 @@ Button {
     width: 20%;
     height: 100%;
     background: #440000;
-    border: none
+    border: none;
 }
 
 Button:hover {
-    background: #550000
+    background: #550000;
 }
 
 Button.on {
-    background: #bb0000
+    background: #bb0000;
 }
 
 Button.on:hover {
-    background: #dd0000
+    background: #dd0000;
 }
 
 /* five_by_five.css ends here */
