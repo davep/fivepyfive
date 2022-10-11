@@ -79,6 +79,14 @@ class FiveByFive(App[None]):
         """
         return len(self.on_cells)
 
+    @property
+    def all_on(self) -> bool:
+        """Are all the cells turned on?
+
+        :type: bool
+        """
+        return self.on_count == self.SIZE*self.SIZE
+
     def new_game(self) -> None:
         """Start a new game."""
         self.moves = 0
@@ -110,7 +118,7 @@ class FiveByFive(App[None]):
         """Refresh the details of the current state of play."""
         self.query_one("#moves", Static).update(f"Moves: {self.moves}")
         self.query_one("#progress", Static).update(
-            "Winner!" if self.on_count == (self.SIZE**2) else f"On: {self.on_count}"
+            "Winner!" if self.all_on else f"On: {self.on_count}"
         )
 
     def toggle_cell(self, row: int, col: int) -> None:
