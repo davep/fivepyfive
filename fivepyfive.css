@@ -40,6 +40,7 @@ Button {
 
 Button:hover {
     background: #550000;
+    border: round #770000;
 }
 
 Button.on {
@@ -48,6 +49,7 @@ Button.on {
 
 Button.on:hover {
     background: #dd0000;
+    border: round #aa0000;
 }
 
 /* five_by_five.css ends here */
