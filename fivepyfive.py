@@ -24,6 +24,7 @@ here; a lot of this will change when documentation is available.
 """
 
 from pathlib import Path
+from typing import cast
 
 from textual.containers import Horizontal
 from textual.app import App, ComposeResult
@@ -69,7 +70,7 @@ class FiveByFive(App[None]):
 
         :type: DOMQuery[Button]
         """
-        return self.query("Button.on")
+        return cast(DOMQuery[Button], self.query("Button.on"))
 
     @property
     def on_count(self) -> int:
