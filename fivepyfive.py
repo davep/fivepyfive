@@ -28,9 +28,11 @@ from typing import cast
 
 from textual.containers import Horizontal
 from textual.app import App, ComposeResult
+from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Footer, Button, Static
 from textual.css.query import DOMQuery
+from textual.reactive import reactive
 
 
 class GameHeader(Widget):
@@ -40,6 +42,12 @@ class GameHeader(Widget):
     and the count of how many cells are turned on (``#progress``).
     """
 
+    #: Keep track of how many moves the player has made.
+    moves = reactive(0)
+
+    #: Keep track of how many cells are turned on.
+    on = reactive(0)
+
     def compose(self) -> ComposeResult:
         yield Horizontal(
             Static(self.app.title, id="app-title"),
@@ -47,22 +55,21 @@ class GameHeader(Widget):
             Static(id="progress"),
         )
 
+    def watch_moves(self, moves: int):
+        self.query_one("#moves", Static).update(f"Moves: {moves}")
 
-class FiveByFive(App[None]):
-    """Main 5x5 application class."""
+    def watch_on(self, on: int):
+        self.query_one("#progress", Static).update(f"On: {on}")
 
-    #: The name of the stylesheet for the app. The cast to a str is
-    # temporary while CSS_PATH doesn't support PurePath.
-    CSS_PATH = str(Path(__file__).with_suffix(".css"))
+
+class GameGrid(Screen):
+    """Main 5x5 game grid screen."""
 
     #: The size of the game grid. Clue's in the name really.
     SIZE = 5
 
+    #: The bindings for the main game grid.
     BINDINGS = [("r", "reset()", "Reset"), ("q", "quit()", "Quit")]
-
-    def __init__(self) -> None:
-        """Constructor."""
-        super().__init__(title="5x5 -- A little annoying puzzle")
 
     @property
     def on_cells(self) -> DOMQuery[Button]:
@@ -86,11 +93,11 @@ class FiveByFive(App[None]):
 
         :type: bool
         """
-        return self.on_count == self.SIZE*self.SIZE
+        return self.on_count == self.SIZE * self.SIZE
 
     def new_game(self) -> None:
         """Start a new game."""
-        self.moves = 0
+        self.query_one(GameHeader).moves = 0
         self.on_cells.remove_class("on")
         self.toggle_cells(
             self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2 }", Button)
@@ -104,23 +111,6 @@ class FiveByFive(App[None]):
                 *[Button("", id=f"cell-{row}-{col}") for col in range(self.SIZE)]
             )
         yield Footer()
-
-        # TODO: I suspect there's a problem here in that I should not be
-        # trying to tinker with the DOM inside compose. The setting up of a
-        # new game (and so flipping classes on the buttons) seems to work,
-        # but updating the game header doesn't because Textual claims it
-        # can't find the #moves Static yet. Presumably there's a hook/event
-        # that is "the DOM is ready, go have fun" but I've not found it yet.
-        self.new_game()
-        # ...hence this is commented out for now, and the above is suspect.
-        # self.refresh_state_of_play()
-
-    def refresh_state_of_play(self) -> None:
-        """Refresh the details of the current state of play."""
-        self.query_one("#moves", Static).update(f"Moves: {self.moves}")
-        self.query_one("#progress", Static).update(
-            "Winner!" if self.all_on else f"On: {self.on_count}"
-        )
 
     def toggle_cell(self, row: int, col: int) -> None:
         """Toggle an individual cell, but only if it's on bounds.
@@ -154,6 +144,7 @@ class FiveByFive(App[None]):
             self.toggle_cell(row, col)
             self.toggle_cell(row, col - 1)
             self.toggle_cell(row, col + 1)
+            self.query_one(GameHeader).on = self.on_count
 
     def make_move_on(self, cell: Button) -> None:
         """Make a move on the given cell.
@@ -162,8 +153,7 @@ class FiveByFive(App[None]):
         game's rules.
         """
         self.toggle_cells(cell)
-        self.moves += 1
-        self.refresh_state_of_play()
+        self.query_one(GameHeader).moves += 1
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """React to a press of a button on the game grid."""
@@ -172,7 +162,28 @@ class FiveByFive(App[None]):
     def action_reset(self) -> None:
         """Reset the game."""
         self.new_game()
-        self.refresh_state_of_play()
+
+    def on_mount(self) -> None:
+        self.new_game()
+
+
+class FiveByFive(App[None]):
+    """Main 5x5 application class."""
+
+    #: The name of the stylesheet for the app. The cast to a str is
+    # temporary while CSS_PATH doesn't support PurePath.
+    CSS_PATH = str(Path(__file__).with_suffix(".css"))
+
+    #: The screens for the game.
+    SCREENS = {"game": GameGrid()}
+
+    def __init__(self) -> None:
+        """Constructor."""
+        super().__init__(title="5x5 -- A little annoying puzzle")
+
+    def on_mount(self) -> None:
+        """Set up the application on startup."""
+        self.push_screen("game")
 
 
 if __name__ == "__main__":
