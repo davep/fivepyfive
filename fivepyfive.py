@@ -18,7 +18,7 @@ are on GitHub).
 from pathlib import Path
 from typing import cast
 
-from textual.containers import Horizontal
+from textual.containers import Grid, Horizontal
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widget import Widget
@@ -102,9 +102,8 @@ class GameGrid(Screen):
         """Compose the application screen."""
         yield GameHeader()
         for row in range(self.SIZE):
-            yield Horizontal(
-                *[Button("", id=f"cell-{row}-{col}") for col in range(self.SIZE)]
-            )
+            for col in range(self.SIZE):
+                yield Button("", id=f"cell-{row}-{col}")
         yield Footer()
 
     def toggle_cell(self, row: int, col: int) -> None:
