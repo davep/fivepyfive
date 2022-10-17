@@ -1,7 +1,12 @@
+Game {
+    align: center middle;
+    layers: gameplay messages;
+}
+
 GameGrid {
     layout: grid;
     grid-size: 5 5;
-    background: #444444;
+    layer: gameplay;
 }
 
 GameHeader {
@@ -9,6 +14,7 @@ GameHeader {
     color: white;
     height: 1;
     dock: top;
+    layer: gameplay;
 }
 
 GameHeader #app-title {
@@ -26,28 +32,42 @@ GameHeader #progress {
 Footer {
     height: 1;
     dock: bottom;
+    layer: gameplay;
 }
 
-Button {
+GameCell {
     width: 100%;
     height: 100%;
     background: #440000;
     border: round #550000;
 }
 
-Button:hover {
+GameCell:hover {
     background: #550000;
     border: round #660000;
 }
 
-Button.on {
+GameCell.on {
     background: #bb0000;
     border: round #aa0000;
 }
 
-Button.on:hover {
+GameCell.on:hover {
     background: #dd0000;
     border: round #aa0000;
+}
+
+WinnerMessage {
+    width: 50%;
+    height: 25%;
+    layer: messages;
+    visibility: hidden;
+    content-align: center middle;
+    background: green;
+}
+
+.visible {
+    visibility: visible;
 }
 
 /* five_by_five.css ends here */

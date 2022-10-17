@@ -18,13 +18,26 @@ are on GitHub).
 from pathlib import Path
 from typing import cast
 
-from textual.containers import Grid, Horizontal
+from textual.containers import Horizontal
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Footer, Button, Static
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
+
+
+class WinnerMessage(Static):
+    """Widget to tell the user they have won."""
+
+    def __init__(self):
+        super().__init__("W I N N E R !", classes="hidden")
+
+    def show(self):
+        self.add_class("visible")
+
+    def hide(self):
+        self.remove_class("visible")
 
 
 class GameHeader(Widget):
@@ -57,22 +70,35 @@ class GameHeader(Widget):
         self.query_one("#progress", Static).update(f"On: {on}")
 
 
-class GameGrid(Screen):
+class GameCell(Button):
+    def __init__(self, row: int, col: int) -> None:
+        super().__init__("", id=f"cell-{row}-{col}")
+
+
+class GameGrid(Widget):
+    def compose(self) -> ComposeResult:
+        """Compose the game grid."""
+        for row in range(Game.SIZE):
+            for col in range(Game.SIZE):
+                yield GameCell(row, col)
+
+
+class Game(Screen):
     """Main 5x5 game grid screen."""
 
     #: The size of the game grid. Clue's in the name really.
     SIZE = 5
 
     #: The bindings for the main game grid.
-    BINDINGS = [("r", "reset()", "Reset"), ("q", "quit()", "Quit")]
+    BINDINGS = [("n", "reset()", "New Game"), ("q", "quit()", "Quit")]
 
     @property
-    def on_cells(self) -> DOMQuery[Button]:
+    def on_cells(self) -> DOMQuery[GameCell]:
         """The collection of cells that are currently turned on.
 
-        :type: DOMQuery[Button]
+        :type: DOMQuery[GameCell]
         """
-        return cast(DOMQuery[Button], self.query("Button.on"))
+        return cast(DOMQuery[GameCell], self.query("GameCell.on"))
 
     @property
     def on_count(self) -> int:
@@ -90,21 +116,26 @@ class GameGrid(Screen):
         """
         return self.on_count == self.SIZE * self.SIZE
 
+    def game_playable(self, playable: bool) -> None:
+        for cell in self.query(GameCell):
+            cell.disabled = not playable
+
     def new_game(self) -> None:
         """Start a new game."""
         self.query_one(GameHeader).moves = 0
         self.on_cells.remove_class("on")
+        self.query_one(WinnerMessage).hide()
+        self.game_playable(True)
         self.toggle_cells(
-            self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2 }", Button)
+            self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2 }", GameCell)
         )
 
     def compose(self) -> ComposeResult:
         """Compose the application screen."""
         yield GameHeader()
-        for row in range(self.SIZE):
-            for col in range(self.SIZE):
-                yield Button("", id=f"cell-{row}-{col}")
+        yield GameGrid()
         yield Footer()
+        yield WinnerMessage()
 
     def toggle_cell(self, row: int, col: int) -> None:
         """Toggle an individual cell, but only if it's on bounds.
@@ -117,12 +148,12 @@ class GameGrid(Screen):
         it with an invalid cell coordinate.
         """
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
-            self.query_one(f"Button#cell-{row}-{col}", Button).toggle_class("on")
+            self.query_one(f"#cell-{row}-{col}", GameCell).toggle_class("on")
 
-    def toggle_cells(self, cell: Button) -> None:
+    def toggle_cells(self, cell: GameCell) -> None:
         """Toggle a 5x5 pattern around the given cell.
 
-        :param Button cell: The cell to toggle the buttons around.
+        :param GameCell cell: The cell to toggle the cells around.
         """
         # Abusing the ID as a data- attribute too (or a cargo instance
         # variable if you're old enough to have worked with Clipper).
@@ -140,7 +171,7 @@ class GameGrid(Screen):
             self.toggle_cell(row, col + 1)
             self.query_one(GameHeader).on = self.on_count
 
-    def make_move_on(self, cell: Button) -> None:
+    def make_move_on(self, cell: GameCell) -> None:
         """Make a move on the given cell.
 
         All relevant cells around the given cell are toggled as per the
@@ -148,10 +179,13 @@ class GameGrid(Screen):
         """
         self.toggle_cells(cell)
         self.query_one(GameHeader).moves += 1
+        if True:
+            self.query_one(WinnerMessage).show()
+            self.game_playable(False)
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: GameCell.Pressed) -> None:
         """React to a press of a button on the game grid."""
-        self.make_move_on(event.button)
+        self.make_move_on(cast(GameCell, event.button))
 
     def action_reset(self) -> None:
         """Reset the game."""
@@ -170,7 +204,7 @@ class FiveByFive(App[None]):
     CSS_PATH = str(Path(__file__).with_suffix(".css"))
 
     #: The screens for the game.
-    SCREENS = {"game": GameGrid()}
+    SCREENS = {"game": Game()}
 
     def __init__(self) -> None:
         """Constructor."""
