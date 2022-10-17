@@ -77,12 +77,12 @@ class GameCell(Button):
     """Individual playable cell in the game."""
 
     @staticmethod
-    def at( row: int, col: int ) -> str:
+    def at(row: int, col: int) -> str:
         return f"cell-{row}-{col}"
 
     def __init__(self, row: int, col: int) -> None:
         """Initialise the game cell."""
-        super().__init__("", id=self.at( row, col ))
+        super().__init__("", id=self.at(row, col))
 
 
 class GameGrid(Widget):
