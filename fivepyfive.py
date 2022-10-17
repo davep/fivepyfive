@@ -76,9 +76,13 @@ class GameHeader(Widget):
 class GameCell(Button):
     """Individual playable cell in the game."""
 
+    @staticmethod
+    def at( row: int, col: int ) -> str:
+        return f"cell-{row}-{col}"
+
     def __init__(self, row: int, col: int) -> None:
         """Initialise the game cell."""
-        super().__init__("", id=f"cell-{row}-{col}")
+        super().__init__("", id=self.at( row, col ))
 
 
 class GameGrid(Widget):
@@ -135,7 +139,7 @@ class Game(Screen):
         self.query_one(WinnerMessage).hide()
         self.game_playable(True)
         self.toggle_cells(
-            self.query_one(f"#cell-{ self.SIZE // 2 }-{ self.SIZE // 2 }", GameCell)
+            self.query_one(f"#{GameCell.at(self.SIZE // 2,self.SIZE // 2 )}", GameCell)
         )
 
     def compose(self) -> ComposeResult:
@@ -156,7 +160,7 @@ class Game(Screen):
         it with an invalid cell coordinate.
         """
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
-            self.query_one(f"#cell-{row}-{col}", GameCell).toggle_class("on")
+            self.query_one(f"#{GameCell.at(row, col)}", GameCell).toggle_class("on")
 
     def toggle_cells(self, cell: GameCell) -> None:
         """Toggle a 5x5 pattern around the given cell.
