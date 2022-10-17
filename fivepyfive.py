@@ -209,7 +209,7 @@ class FiveByFive(App[None]):
 
     #: The name of the stylesheet for the app. The cast to a str is
     # temporary while CSS_PATH doesn't support PurePath.
-    CSS_PATH = str(Path(__file__).with_suffix(".css"))
+    CSS_PATH = Path(__file__).with_suffix(".css")
 
     #: The screens for the game.
     SCREENS = {"game": Game()}
