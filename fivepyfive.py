@@ -71,11 +71,16 @@ class GameHeader(Widget):
 
 
 class GameCell(Button):
+    """Individual playable cell in the game."""
+
     def __init__(self, row: int, col: int) -> None:
+        """Initialise the game cell."""
         super().__init__("", id=f"cell-{row}-{col}")
 
 
 class GameGrid(Widget):
+    """The main playable grid of game cells."""
+
     def compose(self) -> ComposeResult:
         """Compose the game grid."""
         for row in range(Game.SIZE):
