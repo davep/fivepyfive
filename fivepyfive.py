@@ -31,7 +31,7 @@ class WinnerMessage(Static):
     """Widget to tell the user they have won."""
 
     def __init__(self):
-        super().__init__("W I N N E R !", classes="hidden")
+        super().__init__("W I N N E R !")
 
     def show(self):
         self.add_class("visible")
