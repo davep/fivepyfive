@@ -102,7 +102,7 @@ class Game(Screen):
     SIZE = 5
 
     #: The bindings for the main game grid.
-    BINDINGS = [("n", "reset()", "New Game"), ("q", "quit()", "Quit")]
+    BINDINGS = [("n", "reset", "New Game"), ("q", "quit", "Quit")]
 
     @property
     def on_cells(self) -> DOMQuery[GameCell]:
