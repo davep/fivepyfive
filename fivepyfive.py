@@ -179,7 +179,7 @@ class Game(Screen):
         """
         self.toggle_cells(cell)
         self.query_one(GameHeader).moves += 1
-        if True:
+        if self.all_on:
             self.query_one(WinnerMessage).show()
             self.game_playable(False)
 
