@@ -207,8 +207,7 @@ class Game(Screen):
 class FiveByFive(App[None]):
     """Main 5x5 application class."""
 
-    #: The name of the stylesheet for the app. The cast to a str is
-    # temporary while CSS_PATH doesn't support PurePath.
+    #: The name of the stylesheet for the app.
     CSS_PATH = Path(__file__).with_suffix(".css")
 
     def __init__(self) -> None:
