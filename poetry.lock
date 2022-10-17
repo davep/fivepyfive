@@ -292,7 +292,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
 name = "textual"
-version = "0.2.0b5"
+version = "0.2.0b6"
 description = "Modern Text User Interface framework"
 category = "main"
 optional = false
@@ -368,7 +368,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ac80c24b4eb4df84df2069e0f56f649b84147c00d84bd489c0d6408f7dc1ac3c"
+content-hash = "f9244a4b22b4149736f9b7c5d68f8f63a837f1a408eb81e7b5f7a0aab4b49b27"
 
 [metadata.files]
 aiohttp = [
@@ -778,8 +778,8 @@ rich = [
     {file = "rich-12.6.0.tar.gz", hash = "sha256:ba3a3775974105c221d31141f2c116f4fd65c5ceb0698657a11e9f295ec93fd0"},
 ]
 textual = [
-    {file = "textual-0.2.0b5-py3-none-any.whl", hash = "sha256:348465b77ed53fd0cd6ba24d7bede0be4c2b10f3b5bba1efd08fabfb9c3a0d3b"},
-    {file = "textual-0.2.0b5.tar.gz", hash = "sha256:54282897a642038b22ad1c208b11b2e02b81dc957a1b3c42cbb8da154cdbc8d3"},
+    {file = "textual-0.2.0b6-py3-none-any.whl", hash = "sha256:48064decce679ed572aa5831be36a905512bc9ec9af3b1bd930ef246559cf1f3"},
+    {file = "textual-0.2.0b6.tar.gz", hash = "sha256:9e9368e6607400969c5308fefd2a9af2794ff389eff2c6545c0a0918cf99359e"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
