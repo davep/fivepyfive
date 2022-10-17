@@ -129,6 +129,10 @@ class Game(Screen):
         return self.on_count == self.SIZE * self.SIZE
 
     def game_playable(self, playable: bool) -> None:
+        """Mark the game as playable, or not.
+
+        :param bool playable: Should the game currently be playable?
+        """
         for cell in self.query(GameCell):
             cell.disabled = not playable
 
