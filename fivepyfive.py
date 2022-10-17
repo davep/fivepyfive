@@ -13,14 +13,6 @@ https://github.com/davep/5x5-react
 
 amongst others (they're just the ones that I still have code for and which
 are on GitHub).
-
-NOTE: For the moment docstrings and type annotations will be lacking or
-possibly wrong. In part this is because, as of the time of writing, I've got
-no docs to go on yet as to the full extent of the API or the types involved.
-
-ALSO NOTE: The choices of widget, colour, styling, etc, are likely to not be
-my ideal or final choice. Again, guesswork and example-reading are the guide
-here; a lot of this will change when documentation is available.
 """
 
 from pathlib import Path
@@ -49,6 +41,7 @@ class GameHeader(Widget):
     on = reactive(0)
 
     def compose(self) -> ComposeResult:
+        """Compose the game header."""
         yield Horizontal(
             Static(self.app.title, id="app-title"),
             Static(id="moves"),
@@ -56,9 +49,11 @@ class GameHeader(Widget):
         )
 
     def watch_moves(self, moves: int):
+        """Watch the moves reactive and update when it changes."""
         self.query_one("#moves", Static).update(f"Moves: {moves}")
 
     def watch_on(self, on: int):
+        """Watch the on-count reactive and update when it changes."""
         self.query_one("#progress", Static).update(f"On: {on}")
 
 
@@ -164,6 +159,7 @@ class GameGrid(Screen):
         self.new_game()
 
     def on_mount(self) -> None:
+        """Get the game started when we first mount."""
         self.new_game()
 
 
