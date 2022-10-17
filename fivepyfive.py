@@ -211,16 +211,13 @@ class FiveByFive(App[None]):
     # temporary while CSS_PATH doesn't support PurePath.
     CSS_PATH = Path(__file__).with_suffix(".css")
 
-    #: The screens for the game.
-    SCREENS = {"game": Game()}
-
     def __init__(self) -> None:
         """Constructor."""
         super().__init__(title="5x5 -- A little annoying puzzle")
 
     def on_mount(self) -> None:
         """Set up the application on startup."""
-        self.push_screen("game")
+        self.push_screen(Game())
 
 
 if __name__ == "__main__":
