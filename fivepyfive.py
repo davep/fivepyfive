@@ -28,15 +28,17 @@ from textual.reactive import reactive
 
 from rich.markdown import Markdown
 
+
 class Help(Screen):
     """The help screen for the application."""
 
     #: Bindings for the help screen.
-    BINDINGS = [("esc,space,q,h","pop_screen","Close")]
+    BINDINGS = [("esc,space,q,h", "pop_screen", "Close")]
 
     def compose(self) -> ComposeResult:
         """Compose the game's help."""
         yield Static(Markdown(Path("README.md").read_text()))
+
 
 class WinnerMessage(Static):
     """Widget to tell the user they have won."""
@@ -52,12 +54,14 @@ class WinnerMessage(Static):
         """Show the winner message."""
         self.update(
             "W I N N E R !\n\n\n"
-            f"You solved the puzzle in {moves} move{self._plural(moves)}." + (
+            f"You solved the puzzle in {moves} move{self._plural(moves)}."
+            + (
                 (
                     f" It is possible to solve the puzzle in {self.MIN_MOVES}, "
                     f"you were {moves - self.MIN_MOVES} move{self._plural(moves - self.MIN_MOVES)} over."
-                ) if moves > self.MIN_MOVES else
-                " Well done! That's the minimum number of moves to solve the puzzle!"
+                )
+                if moves > self.MIN_MOVES
+                else " Well done! That's the minimum number of moves to solve the puzzle!"
             )
         )
         self.add_class("visible")
@@ -126,7 +130,11 @@ class Game(Screen):
     SIZE = 5
 
     #: The bindings for the main game grid.
-    BINDINGS = [("n", "reset", "New Game"), ("h,?","push_screen('help')","Help"),("q", "quit", "Quit")]
+    BINDINGS = [
+        ("n", "reset", "New Game"),
+        ("h,?", "push_screen('help')", "Help"),
+        ("q", "quit", "Quit"),
+    ]
 
     @property
     def on_cells(self) -> DOMQuery[GameCell]:
@@ -243,7 +251,7 @@ class FiveByFive(App[None]):
     CSS_PATH = Path(__file__).with_suffix(".css")
 
     #: The pre-loaded screens for the application.
-    SCREENS = {"help":Help()}
+    SCREENS = {"help": Help()}
 
     def __init__(self) -> None:
         """Constructor."""
