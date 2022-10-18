@@ -63,6 +63,7 @@ WinnerMessage {
     layer: messages;
     visibility: hidden;
     content-align: center middle;
+    text-align: center;
     background: green;
 }
 

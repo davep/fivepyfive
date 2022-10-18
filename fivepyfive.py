@@ -16,7 +16,7 @@ are on GitHub).
 """
 
 from pathlib import Path
-from typing import cast
+from typing import Final, cast
 
 from textual.containers import Horizontal
 from textual.app import App, ComposeResult
@@ -30,12 +30,25 @@ from textual.reactive import reactive
 class WinnerMessage(Static):
     """Widget to tell the user they have won."""
 
-    def __init__(self):
-        """Initialise the winner message."""
-        super().__init__("W I N N E R !")
+    #: The minimum number of moves you can solve the puzzle in.
+    MIN_MOVES: Final = 14
 
-    def show(self):
+    @staticmethod
+    def _plural(value: int) -> str:
+        return "" if value == 1 else "s"
+
+    def show(self, moves: int):
         """Show the winner message."""
+        self.update(
+            "W I N N E R !\n\n\n"
+            f"You solved the puzzle in {moves} move{self._plural(moves)}." + (
+                (
+                    f" It is possible to solve the puzzle in {self.MIN_MOVES}, "
+                    f"you were {moves - self.MIN_MOVES} move{self._plural(moves - self.MIN_MOVES)} over."
+                ) if moves > self.MIN_MOVES else
+                " Well done! That's the minimum number of moves to solve the puzzle!"
+            )
+        )
         self.add_class("visible")
 
     def hide(self):
@@ -196,7 +209,7 @@ class Game(Screen):
         self.toggle_cells(cell)
         self.query_one(GameHeader).moves += 1
         if self.all_on:
-            self.query_one(WinnerMessage).show()
+            self.query_one(WinnerMessage).show(self.query_one(GameHeader).moves)
             self.game_playable(False)
 
     def on_button_pressed(self, event: GameCell.Pressed) -> None:
