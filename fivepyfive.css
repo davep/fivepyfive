@@ -10,8 +10,8 @@ GameGrid {
 }
 
 GameHeader {
-    background: red;
-    color: white;
+    background: $primary;
+    color: $text;
     height: 1;
     dock: top;
     layer: gameplay;
@@ -38,23 +38,23 @@ Footer {
 GameCell {
     width: 100%;
     height: 100%;
-    background: #440000;
-    border: round #550000;
+    background: $panel;
+    border: round $panel-darken-1;
 }
 
 GameCell:hover {
-    background: #550000;
-    border: round #660000;
+    background: $panel-lighten-1;
+    border: round $panel;
 }
 
 GameCell.on {
-    background: #bb0000;
-    border: round #aa0000;
+    background: $secondary;
+    border: round $secondary-darken-1;
 }
 
 GameCell.on:hover {
-    background: #dd0000;
-    border: round #aa0000;
+    background: $secondary-lighten-1;
+    border: round $secondary;
 }
 
 WinnerMessage {
@@ -64,7 +64,8 @@ WinnerMessage {
     visibility: hidden;
     content-align: center middle;
     text-align: center;
-    background: green;
+    background: $success;
+    color: $text;
     border: round;
     padding: 2;
 }
