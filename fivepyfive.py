@@ -48,7 +48,7 @@ class WinnerMessage(Static):
     def _plural(value: int) -> str:
         return "" if value == 1 else "s"
 
-    def show(self, moves: int):
+    def show(self, moves: int) -> None:
         """Show the winner message."""
         self.update(
             "W I N N E R !\n\n\n"
@@ -62,7 +62,7 @@ class WinnerMessage(Static):
         )
         self.add_class("visible")
 
-    def hide(self):
+    def hide(self) -> None:
         """Hide the winner message."""
         self.remove_class("visible")
 
