@@ -65,6 +65,8 @@ WinnerMessage {
     content-align: center middle;
     text-align: center;
     background: green;
+    border: round;
+    padding: 2;
 }
 
 .visible {
