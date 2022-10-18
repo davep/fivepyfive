@@ -26,6 +26,17 @@ from textual.widgets import Footer, Button, Static
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
 
+from rich.markdown import Markdown
+
+class Help(Screen):
+    """The help screen for the application."""
+
+    #: Bindings for the help screen.
+    BINDINGS = [("esc,space,q,h","pop_screen","Close")]
+
+    def compose(self) -> ComposeResult:
+        """Compose the game's help."""
+        yield Static(Markdown(Path("README.md").read_text()))
 
 class WinnerMessage(Static):
     """Widget to tell the user they have won."""
@@ -115,7 +126,7 @@ class Game(Screen):
     SIZE = 5
 
     #: The bindings for the main game grid.
-    BINDINGS = [("n", "reset", "New Game"), ("q", "quit", "Quit")]
+    BINDINGS = [("n", "reset", "New Game"), ("h,?","push_screen('help')","Help"),("q", "quit", "Quit")]
 
     @property
     def on_cells(self) -> DOMQuery[GameCell]:
@@ -230,6 +241,9 @@ class FiveByFive(App[None]):
 
     #: The name of the stylesheet for the app.
     CSS_PATH = Path(__file__).with_suffix(".css")
+
+    #: The pre-loaded screens for the application.
+    SCREENS = {"help":Help()}
 
     def __init__(self) -> None:
         """Constructor."""
