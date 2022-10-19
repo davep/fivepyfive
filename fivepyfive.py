@@ -253,6 +253,9 @@ class FiveByFive(App[None]):
     #: The pre-loaded screens for the application.
     SCREENS = {"help": Help()}
 
+    #: App-level bindings.
+    BINDINGS = [("d","app.toggle_dark", "Toggle Dark Mode")]
+
     def __init__(self) -> None:
         """Constructor."""
         super().__init__(title="5x5 -- A little annoying puzzle")
