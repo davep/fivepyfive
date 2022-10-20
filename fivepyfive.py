@@ -16,7 +16,13 @@ are on GitHub).
 """
 
 from pathlib import Path
-from typing import Final, cast
+from typing import cast
+import sys
+
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    from typing_extensions import Final
 
 from textual.containers import Horizontal
 from textual.app import App, ComposeResult
@@ -25,6 +31,7 @@ from textual.widget import Widget
 from textual.widgets import Footer, Button, Static
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
+from textual.binding import Binding
 
 from rich.markdown import Markdown
 
@@ -33,10 +40,14 @@ class Help(Screen):
     """The help screen for the application."""
 
     #: Bindings for the help screen.
-    BINDINGS = [("esc,space,q,h", "app.pop_screen", "Close")]
+    BINDINGS = [("escape,space,q,question_mark", "pop_screen", "Close")]
 
     def compose(self) -> ComposeResult:
-        """Compose the game's help."""
+        """Compose the game's help.
+
+        Returns:
+            ComposeResult: The result of composing the help screen.
+        """
         yield Static(Markdown(Path("README.md").read_text()))
 
 
@@ -51,7 +62,11 @@ class WinnerMessage(Static):
         return "" if value == 1 else "s"
 
     def show(self, moves: int) -> None:
-        """Show the winner message."""
+        """Show the winner message.
+
+        Args:
+            moves (int): The number of moves required to win.
+        """
         self.update(
             "W I N N E R !\n\n\n"
             f"You solved the puzzle in {moves} move{self._plural(moves)}."
@@ -81,11 +96,15 @@ class GameHeader(Widget):
     #: Keep track of how many moves the player has made.
     moves = reactive(0)
 
-    #: Keep track of how many cells are turned on.
-    on = reactive(0)
+    #: Keep track of how many cells are filled.
+    filled = reactive(0)
 
     def compose(self) -> ComposeResult:
-        """Compose the game header."""
+        """Compose the game header.
+
+        Returns:
+            ComposeResult: The result of composing the game header.
+        """
         yield Horizontal(
             Static(self.app.title, id="app-title"),
             Static(id="moves"),
@@ -93,12 +112,20 @@ class GameHeader(Widget):
         )
 
     def watch_moves(self, moves: int):
-        """Watch the moves reactive and update when it changes."""
+        """Watch the moves reactive and update when it changes.
+
+        Args:
+            moves (int): The number of moves made.
+        """
         self.query_one("#moves", Static).update(f"Moves: {moves}")
 
-    def watch_on(self, on: int):
-        """Watch the on-count reactive and update when it changes."""
-        self.query_one("#progress", Static).update(f"On: {on}")
+    def watch_filled(self, filled: int):
+        """Watch the on-count reactive and update when it changes.
+
+        Args:
+            filled (int): The number of cells that are currently on.
+        """
+        self.query_one("#progress", Static).update(f"Filled: {filled}")
 
 
 class GameCell(Button):
@@ -106,18 +133,39 @@ class GameCell(Button):
 
     @staticmethod
     def at(row: int, col: int) -> str:
+        """Get the ID of the cell at the given location.
+
+        Args:
+            row (int): The row of the cell.
+            col (int): The column of the cell.
+
+        Returns:
+            str: A string ID for the cell.
+        """
         return f"cell-{row}-{col}"
 
     def __init__(self, row: int, col: int) -> None:
-        """Initialise the game cell."""
+        """Initialise the game cell.
+
+        Args:
+            row (int): The row of the cell.
+            col (int): The column of the cell.
+
+        """
         super().__init__("", id=self.at(row, col))
+        self.row = row
+        self.col = col
 
 
 class GameGrid(Widget):
     """The main playable grid of game cells."""
 
     def compose(self) -> ComposeResult:
-        """Compose the game grid."""
+        """Compose the game grid.
+
+        Returns:
+            ComposeResult: The result of composing the game grid.
+        """
         for row in range(Game.SIZE):
             for col in range(Game.SIZE):
                 yield GameCell(row, col)
@@ -131,117 +179,145 @@ class Game(Screen):
 
     #: The bindings for the main game grid.
     BINDINGS = [
-        ("n", "reset", "New Game"),
-        ("h,question_mark", "app.push_screen('help')", "Help"),
-        ("q", "app.quit", "Quit"),
+        Binding("n", "new_game", "New Game"),
+        Binding("question_mark", "push_screen('help')", "Help", key_display="?"),
+        Binding("q", "quit", "Quit"),
+        Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
+        Binding("down,s,j", "navigate(1,0)", "Move Down", False),
+        Binding("left,a,h", "navigate(0,-1)", "Move Left", False),
+        Binding("right,d,l", "navigate(0,1)", "Move Right", False),
+        Binding("space", "move", "Toggle", False),
     ]
 
     @property
-    def on_cells(self) -> DOMQuery[GameCell]:
-        """The collection of cells that are currently turned on.
-
-        :type: DOMQuery[GameCell]
-        """
-        return cast(DOMQuery[GameCell], self.query("GameCell.on"))
+    def filled_cells(self) -> DOMQuery[GameCell]:
+        """DOMQuery[GameCell]: The collection of cells that are currently turned on."""
+        return cast(DOMQuery[GameCell], self.query("GameCell.filled"))
 
     @property
-    def on_count(self) -> int:
-        """The number of cells that are turned on.
-
-        :type: int
-        """
-        return len(self.on_cells)
+    def filled_count(self) -> int:
+        """int: The number of cells that are currently filled."""
+        return len(self.filled_cells)
 
     @property
-    def all_on(self) -> bool:
-        """Are all the cells turned on?
-
-        :type: bool
-        """
-        return self.on_count == self.SIZE * self.SIZE
+    def all_filled(self) -> bool:
+        """bool: Are all the cells filled?"""
+        return self.filled_count == self.SIZE * self.SIZE
 
     def game_playable(self, playable: bool) -> None:
         """Mark the game as playable, or not.
 
-        :param bool playable: Should the game currently be playable?
+        Args:
+            playable (bool): Should the game currently be playable?
         """
         for cell in self.query(GameCell):
             cell.disabled = not playable
 
-    def new_game(self) -> None:
-        """Start a new game."""
-        self.query_one(GameHeader).moves = 0
-        self.on_cells.remove_class("on")
-        self.query_one(WinnerMessage).hide()
-        self.game_playable(True)
-        self.toggle_cells(
-            self.query_one(f"#{GameCell.at(self.SIZE // 2,self.SIZE // 2 )}", GameCell)
-        )
+    def cell(self, row: int, col: int) -> GameCell:
+        """Get the cell at a given location.
+
+        Args:
+            row (int): The row of the cell to get.
+            col (int): The column of the cell to get.
+
+        Returns:
+            GameCell: The cell at that location.
+        """
+        return self.query_one(f"#{GameCell.at(row,col)}", GameCell)
 
     def compose(self) -> ComposeResult:
-        """Compose the application screen."""
+        """Compose the game screen.
+
+        Returns:
+            ComposeResult: The result of composing the game screen.
+        """
         yield GameHeader()
         yield GameGrid()
         yield Footer()
         yield WinnerMessage()
 
     def toggle_cell(self, row: int, col: int) -> None:
-        """Toggle an individual cell, but only if it's on bounds.
-
-        :param int row: The row of the cell to toggle.
-        :param int col: The column of the cell to toggle.
+        """Toggle an individual cell, but only if it's in bounds.
 
         If the row and column would place the cell out of bounds for the
         game grid, this function call is a no-op. That is, it's safe to call
         it with an invalid cell coordinate.
+
+        Args:
+            row (int): The row of the cell to toggle.
+            col (int): The column of the cell to toggle.
         """
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
-            self.query_one(f"#{GameCell.at(row, col)}", GameCell).toggle_class("on")
+            self.cell(row, col).toggle_class("filled")
+
+    _PATTERN: Final = (-1, 1, 0, 0, 0)
 
     def toggle_cells(self, cell: GameCell) -> None:
         """Toggle a 5x5 pattern around the given cell.
 
-        :param GameCell cell: The cell to toggle the cells around.
+        Args:
+            cell (GameCell): The cell to toggle the cells around.
         """
-        # Abusing the ID as a data- attribute too (or a cargo instance
-        # variable if you're old enough to have worked with Clipper).
-        # Textual doesn't have anything like it at the moment:
-        #
-        # https://twitter.com/davepdotorg/status/1555822341170597888
-        #
-        # but given the reply it may do at some point.
-        if cell.id:
-            row, col = map(int, cell.id.split("-")[1:])
-            self.toggle_cell(row - 1, col)
-            self.toggle_cell(row + 1, col)
-            self.toggle_cell(row, col)
-            self.toggle_cell(row, col - 1)
-            self.toggle_cell(row, col + 1)
-            self.query_one(GameHeader).on = self.on_count
+        for row, col in zip(self._PATTERN, reversed(self._PATTERN)):
+            self.toggle_cell(cell.row + row, cell.col + col)
+        self.query_one(GameHeader).filled = self.filled_count
 
     def make_move_on(self, cell: GameCell) -> None:
         """Make a move on the given cell.
 
         All relevant cells around the given cell are toggled as per the
         game's rules.
+
+        Args:
+            cell (GameCell): The cell to make a move on
         """
         self.toggle_cells(cell)
         self.query_one(GameHeader).moves += 1
-        if self.all_on:
+        if self.all_filled:
             self.query_one(WinnerMessage).show(self.query_one(GameHeader).moves)
             self.game_playable(False)
 
     def on_button_pressed(self, event: GameCell.Pressed) -> None:
-        """React to a press of a button on the game grid."""
+        """React to a press of a button on the game grid.
+
+        Args:
+            event (GameCell.Pressed): The event to react to.
+        """
         self.make_move_on(cast(GameCell, event.button))
 
-    def action_reset(self) -> None:
-        """Reset the game."""
-        self.new_game()
+    def action_new_game(self) -> None:
+        """Start a new game."""
+        self.query_one(GameHeader).moves = 0
+        self.filled_cells.remove_class("filled")
+        self.query_one(WinnerMessage).hide()
+        middle = self.cell(self.SIZE // 2, self.SIZE // 2)
+        self.toggle_cells(middle)
+        self.set_focus(middle)
+        self.game_playable(True)
+
+    def action_navigate(self, row: int, col: int) -> None:
+        """Navigate to a new cell by the given offsets.
+
+        Args:
+            row (int): The row of the cell to navigate to.
+            col (int): The column of the cell to navigate to.
+        """
+        if isinstance(self.focused, GameCell):
+            self.set_focus(
+                self.cell(
+                    (self.focused.row + row) % self.SIZE,
+                    (self.focused.col + col) % self.SIZE,
+                )
+            )
+
+    def action_move(self) -> None:
+        """Make a move on the current cell."""
+        if isinstance(self.focused, GameCell):
+            self.focused.press()
 
     def on_mount(self) -> None:
         """Get the game started when we first mount."""
-        self.new_game()
+        self.action_new_game()
 
 
 class FiveByFive(App[None]):
@@ -254,7 +330,7 @@ class FiveByFive(App[None]):
     SCREENS = {"help": Help()}
 
     #: App-level bindings.
-    BINDINGS = [("d","app.toggle_dark", "Toggle Dark Mode")]
+    BINDINGS = [("D", "toggle_dark", "Toggle Dark Mode")]
 
     def __init__(self) -> None:
         """Constructor."""
@@ -267,5 +343,3 @@ class FiveByFive(App[None]):
 
 if __name__ == "__main__":
     FiveByFive().run()
-
-### fivepyfive.py ends here
