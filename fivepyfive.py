@@ -332,9 +332,8 @@ class FiveByFive(App[None]):
     #: App-level bindings.
     BINDINGS = [("D", "toggle_dark", "Toggle Dark Mode")]
 
-    def __init__(self) -> None:
-        """Constructor."""
-        super().__init__(title="5x5 -- A little annoying puzzle")
+    #: The title of the app.
+    TITLE = "5x5 -- A little annoying puzzle"
 
     def on_mount(self) -> None:
         """Set up the application on startup."""
