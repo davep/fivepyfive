@@ -16,7 +16,7 @@ from textual.widgets import Static
 from rich.markdown import Markdown
 
 ##############################################################################
-class Help(Screen):
+class Help( Screen ):
     """The help screen for the application."""
 
     BINDINGS = [
@@ -30,6 +30,6 @@ class Help(Screen):
         Returns:
             ComposeResult: The result of composing the help screen.
         """
-        yield Static( Markdown( Path("README.md").read_text()))
+        yield Static( Markdown( ( Path( __file__  ).parent / "help.md" ).read_text() ) )
 
 ### help_screen.py ends here
