@@ -11,6 +11,7 @@ from textual.binding import Binding
 
 ##############################################################################
 # Local imports.
+from .            import __version__
 from .game_screen import Game
 from .help_screen import Help
 
@@ -32,7 +33,7 @@ class FiveByFive( App[ None ] ):
     ]
     """list[ Binding ]: App-level bindings."""
 
-    TITLE = "5x5 -- A little annoying puzzle"
+    TITLE = f"FivePyFive - A little annoying puzzle - v{__version__}"
     """str: The title of the app."""
 
     def on_mount( self ) -> None:
