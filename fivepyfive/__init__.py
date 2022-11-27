@@ -1,4 +1,4 @@
-"""An little annoying puzzle for the terminal."""
+"""A little annoying puzzle for the terminal."""
 
 ######################################################################
 # Main app information.
