@@ -27,13 +27,13 @@ class FiveByFive( App[ None ] ):
     }
     """Screen collection for the application."""
 
-    #: App-level bindings.
     BINDINGS = [
         Binding( "t", "toggle_dark", "Toggle Dark Mode" )
     ]
+    """list[ Binding ]: App-level bindings."""
 
-    #: The title of the app.
     TITLE = "5x5 -- A little annoying puzzle"
+    """str: The title of the app."""
 
     def on_mount( self ) -> None:
         """Set up the application on startup."""
