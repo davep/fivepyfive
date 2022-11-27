@@ -137,7 +137,7 @@ class Game( Screen ):
         """
         self.make_move_on( cast( GameCell, event.button ) )
 
-    def action_new_game(self) -> None:
+    def action_new_game( self ) -> None:
         """Start a new game."""
         self.header.moves = 0
         self.filled_cells.remove_class( "filled" )
@@ -147,7 +147,7 @@ class Game( Screen ):
         self.set_focus( middle )
         self.game_playable( True )
 
-    def action_navigate(self, row: int, col: int) -> None:
+    def action_navigate( self, row: int, col: int ) -> None:
         """Navigate to a new cell by the given offsets.
 
         Args:
