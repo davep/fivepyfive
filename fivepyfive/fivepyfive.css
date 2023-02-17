@@ -79,10 +79,7 @@ WinnerMessage {
 }
 
 Help {
-    background: $secondary;
-    color: $text;
     border: round $primary-lighten-3;
-    padding: 2;
 }
 
 /* five_by_five.css ends here */

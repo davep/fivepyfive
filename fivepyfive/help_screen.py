@@ -9,11 +9,7 @@ from pathlib import Path
 from textual.app     import ComposeResult
 from textual.screen  import Screen
 from textual.binding import Binding
-from textual.widgets import Static
-
-##############################################################################
-# Rich imports.
-from rich.markdown import Markdown
+from textual.widgets import Markdown
 
 ##############################################################################
 class Help( Screen ):
@@ -30,6 +26,6 @@ class Help( Screen ):
         Returns:
             The result of composing the help screen.
         """
-        yield Static( Markdown( ( Path( __file__  ).parent / "help.md" ).read_text() ) )
+        yield Markdown( ( Path( __file__  ).parent / "help.md" ).read_text() )
 
 ### help_screen.py ends here
