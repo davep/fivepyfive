@@ -17,7 +17,7 @@ class GameGrid( Widget ):
         """Initialise the game grid.
 
         Args:
-            size (int): The size of the grid.
+            size: The size of the grid.
         """
         super().__init__()
         self._game_size = size
@@ -26,7 +26,7 @@ class GameGrid( Widget ):
         """Compose the game grid.
 
         Returns:
-            ComposeResult: The result of composing the game grid.
+            The result of composing the game grid.
         """
         for row in range( self._game_size ):
             for col in range( self._game_size ):

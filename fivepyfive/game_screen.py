@@ -24,7 +24,7 @@ class Game( Screen ):
     """Main 5x5 game grid screen."""
 
     SIZE: Final = 5
-    """int: The size of the game grid. Clue's in the name really."""
+    """The size of the game grid. Clue's in the name really."""
 
     BINDINGS = [
         Binding( "n",             "new_game",            "New Game" ),
@@ -36,28 +36,28 @@ class Game( Screen ):
         Binding( "right,d,l",     "navigate(0,1)",       "Move Right", False ),
         Binding( "space",         "move",                "Toggle",     False )
     ]
-    """list[ Binding ]: The bindings for the main game grid."""
+    """The bindings for the main game grid."""
 
     @property
     def filled_cells( self ) -> DOMQuery[ GameCell ]:
-        """DOMQuery[ GameCell ]: The collection of cells that are currently turned on."""
+        """The collection of cells that are currently turned on."""
         return cast( DOMQuery[ GameCell ], self.query( "GameCell.filled" ) )
 
     @property
     def filled_count( self ) -> int:
-        """int: The number of cells that are currently filled."""
+        """The number of cells that are currently filled."""
         return len( self.filled_cells )
 
     @property
     def all_filled( self ) -> bool:
-        """bool: Are all the cells filled?"""
+        """Are all the cells filled?"""
         return self.filled_count == self.SIZE * self.SIZE
 
     def game_playable( self, playable: bool ) -> None:
         """Mark the game as playable, or not.
 
         Args:
-            playable (bool): Should the game currently be playable?
+            playable: Should the game currently be playable?
         """
         for cell in self.query( GameCell ):
             cell.disabled = not playable
@@ -66,11 +66,11 @@ class Game( Screen ):
         """Get the cell at a given location.
 
         Args:
-            row (int): The row of the cell to get.
-            col (int): The column of the cell to get.
+            row: The row of the cell to get.
+            col: The column of the cell to get.
 
         Returns:
-            GameCell: The cell at that location.
+            The cell at that location.
         """
         return self.query_one( f"#{GameCell.at( row, col )}", GameCell )
 
@@ -78,7 +78,7 @@ class Game( Screen ):
         """Compose the game screen.
 
         Returns:
-            ComposeResult: The result of composing the game screen.
+            The result of composing the game screen.
         """
         self.header = GameHeader()
         self.grid   = GameGrid( self.SIZE )
@@ -96,8 +96,8 @@ class Game( Screen ):
         it with an invalid cell coordinate.
 
         Args:
-            row (int): The row of the cell to toggle.
-            col (int): The column of the cell to toggle.
+            row: The row of the cell to toggle.
+            col: The column of the cell to toggle.
         """
         if 0 <= row <= ( self.SIZE - 1 ) and 0 <= col <= ( self.SIZE - 1 ):
             self.cell( row, col ).toggle_class( "filled" )
@@ -108,7 +108,7 @@ class Game( Screen ):
         """Toggle a 5x5 pattern around the given cell.
 
         Args:
-            cell (GameCell): The cell to toggle the cells around.
+            cell: The cell to toggle the cells around.
         """
         for row, col in zip( self._PATTERN, reversed( self._PATTERN ) ):
             self.toggle_cell( cell.row + row, cell.col + col )
@@ -121,7 +121,7 @@ class Game( Screen ):
         game's rules.
 
         Args:
-            cell (GameCell): The cell to make a move on
+            cell: The cell to make a move on
         """
         self.toggle_cells( cell )
         self.header.moves += 1
@@ -133,7 +133,7 @@ class Game( Screen ):
         """React to a press of a button on the game grid.
 
         Args:
-            event (GameCell.Pressed): The event to react to.
+            event: The event to react to.
         """
         self.make_move_on( cast( GameCell, event.button ) )
 
@@ -151,8 +151,8 @@ class Game( Screen ):
         """Navigate to a new cell by the given offsets.
 
         Args:
-            row (int): The row of the cell to navigate to.
-            col (int): The column of the cell to navigate to.
+            row: The row of the cell to navigate to.
+            col: The column of the cell to navigate to.
         """
         if isinstance( self.focused, GameCell ):
             self.set_focus(

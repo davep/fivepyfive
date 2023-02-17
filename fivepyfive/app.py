@@ -20,7 +20,7 @@ class FiveByFive( App[ None ] ):
     """Main 5x5 application class."""
 
     CSS_PATH = Path( "fivepyfive.css" )
-    """Path: The path to the style sheet for the application."""
+    """The path to the style sheet for the application."""
 
     SCREENS = {
         "game": Game,
@@ -31,10 +31,10 @@ class FiveByFive( App[ None ] ):
     BINDINGS = [
         Binding( "t", "toggle_dark", "Toggle Dark Mode" )
     ]
-    """list[ Binding ]: App-level bindings."""
+    """App-level bindings."""
 
     TITLE = f"FivePyFive - A little annoying puzzle - v{__version__}"
-    """str: The title of the app."""
+    """The title of the app."""
 
     def on_mount( self ) -> None:
         """Set up the application on startup."""

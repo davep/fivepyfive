@@ -28,7 +28,7 @@ class Help( Screen ):
         """Compose the game's help.
 
         Returns:
-            ComposeResult: The result of composing the help screen.
+            The result of composing the help screen.
         """
         yield Static( Markdown( ( Path( __file__  ).parent / "help.md" ).read_text() ) )
 

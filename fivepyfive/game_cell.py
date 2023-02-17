@@ -13,11 +13,11 @@ class GameCell( Button ):
         """Get the ID of the cell at the given location.
 
         Args:
-            row (int): The row of the cell.
-            col (int): The column of the cell.
+            row: The row of the cell.
+            col: The column of the cell.
 
         Returns:
-            str: A string ID for the cell.
+            A string ID for the cell.
         """
         return f"cell-{row}-{col}"
 
@@ -25,8 +25,8 @@ class GameCell( Button ):
         """Initialise the game cell.
 
         Args:
-            row (int): The row of the cell.
-            col (int): The column of the cell.
+            row: The row of the cell.
+            col: The column of the cell.
         """
         super().__init__( "", id=self.at( row, col ) )
         self.row = row

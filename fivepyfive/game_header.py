@@ -17,16 +17,16 @@ class GameHeader( Widget ):
     """
 
     moves = reactive( 0 )
-    """int: Keep track of how many moves the player has made."""
+    """Keep track of how many moves the player has made."""
 
     filled = reactive( 0 )
-    """int: Keep track of how many cells are filled."""
+    """Keep track of how many cells are filled."""
 
     def compose( self ) -> ComposeResult:
         """Compose the game header.
 
         Returns:
-            ComposeResult: The result of composing the game header.
+            The result of composing the game header.
         """
         self.move_count = Static( id="moves" )
         self.progress   = Static( id="progress" )
@@ -38,7 +38,7 @@ class GameHeader( Widget ):
         """Watch the moves reactive and update when it changes.
 
         Args:
-            moves (int): The number of moves made.
+            moves: The number of moves made.
         """
         self.move_count.update( f"Moves: {moves}" )
 
@@ -46,7 +46,7 @@ class GameHeader( Widget ):
         """Watch the on-count reactive and update when it changes.
 
         Args:
-            filled (int): The number of cells that are currently on.
+            filled: The number of cells that are currently on.
         """
         self.progress.update( f"Filled: {filled}" )
 
