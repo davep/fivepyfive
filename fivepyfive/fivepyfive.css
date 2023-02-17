@@ -79,7 +79,7 @@ WinnerMessage {
 }
 
 Help {
-    background: $primary;
+    background: $secondary;
     color: $text;
     border: round $primary-lighten-3;
     padding: 2;
