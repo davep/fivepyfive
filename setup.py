@@ -47,7 +47,7 @@ setup(
     packages                      = find_packages(),
     package_data                  = { "fivepyfive": [ "py.typed", "fivepyfive.css", "help.md" ] },
     include_package_data          = True,
-    install_requires              = [ "textual" ],
+    install_requires              = [ "textual==0.11.1" ],
     python_requires               = ">=3.8",
     keywords                      = "puzzle game terminal",
     entry_points                  = {
